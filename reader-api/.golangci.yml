@@ -1,0 +1,29 @@
+linters:
+  enable:
+    - gofmt
+    - revive
+    - govet
+    - megacheck
+    - misspell
+    - gocritic
+    - asciicheck
+    - depguard
+    - dupl
+    - gochecknoinits
+    - gocognit
+    - goconst
+    - gocyclo
+    - nolintlint
+    - prealloc
+    - forcetypeassert
+    - errname
+    - stylecheck
+    - unconvert
+    - whitespace
+    - wsl
+  disable:
+    - deadcode
+linters-settings:
+  misspell:
+    locale: US
+    
