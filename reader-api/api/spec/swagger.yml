@@ -17,9 +17,9 @@ paths:
             schema:
               type: object
               required:
-                - fileName
+                - file
               properties:
-                fileName:
+                file:
                   type: string
                   format: binary
       responses:

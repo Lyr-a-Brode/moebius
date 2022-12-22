@@ -8,7 +8,7 @@ dep:
 	go mod tidy
 
 generate:
-	go generate ./rest_api
+	go generate ./api
 
 lint:
 	golangci-lint run

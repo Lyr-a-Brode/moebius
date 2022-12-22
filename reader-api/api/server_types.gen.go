@@ -9,7 +9,7 @@ import (
 
 // UploadBookMultipartBody defines parameters for UploadBook.
 type UploadBookMultipartBody struct {
-	FileName openapi_types.File `json:"fileName"`
+	File openapi_types.File `json:"file"`
 }
 
 // UploadBookMultipartRequestBody defines body for UploadBook for multipart/form-data ContentType.

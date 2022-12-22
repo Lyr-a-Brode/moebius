@@ -29,7 +29,7 @@ func main() {
 		logger.SetLevel(log.DebugLevel)
 	}
 
-	e, err := api.NewRouter(api.NewHandlers())
+	e, err := api.NewRouter(api.NewHandlers(), cfg.App.EnableDebug)
 	if err != nil {
 		log.WithError(err).Fatal("Unable to read swagger spec")
 	}
