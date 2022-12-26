@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/Lyr-a-Brode/moebius/reader-api/api"
 	"github.com/Lyr-a-Brode/moebius/reader-api/metrics"
+	"github.com/Lyr-a-Brode/moebius/reader-api/services"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 	"net/http"
@@ -29,7 +30,9 @@ func main() {
 		logger.SetLevel(log.DebugLevel)
 	}
 
-	e, err := api.NewRouter(api.NewHandlers(), cfg.App.EnableDebug)
+	bookService := services.NewBookService()
+
+	e, err := api.NewRouter(api.NewHandlers(bookService), cfg.App.EnableDebug)
 	if err != nil {
 		log.WithError(err).Fatal("Unable to read swagger spec")
 	}
