@@ -14,4 +14,4 @@ lint:
 	golangci-lint run
 
 build:
-	go build -o blob-store cmd/blob-store
+	go build -o blob-store ./cmd/blob-store

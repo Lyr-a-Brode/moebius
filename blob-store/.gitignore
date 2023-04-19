@@ -1,3 +1,4 @@
 vendor
 gen
 .idea
+cmd/blod-store/.env

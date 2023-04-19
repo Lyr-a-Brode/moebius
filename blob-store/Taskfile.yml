@@ -1,0 +1,15 @@
+version: '3'
+
+env:
+  CGO_ENABLED: off
+  PKG: "github.com/Lyr-a-Brode/moebius/blob-store"
+
+tasks:
+  generate:
+    go generate ./api
+
+  lint:
+    golangci-lint run
+
+  build:
+    go build -o blob-store $PKG/cmd/blob-store

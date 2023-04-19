@@ -11,6 +11,8 @@ paths:
     post:
       summary: Upload blob
       operationId: uploadBlob
+      parameters:
+        - $ref: '#/components/parameters/xTraceID'
       requestBody:
         content:
           multipart/form-data:
@@ -24,4 +26,59 @@ paths:
                   format: binary
       responses:
         201:
-          description: Blob uploaded successfully
+          $ref: "#/components/responses/UploadBlobResponse"
+        400:
+          $ref: "#/components/responses/ErrorBadRequest"
+        500:
+          $ref: "#/components/responses/ErrorInternal"
+
+
+components:
+  schemas:
+    Error:
+      type: object
+      description: Object with error type and description
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      example:
+        type: "blob_not_provided"
+        message: "Blob was not provided in request body"
+  parameters:
+    xTraceID:
+      in: header
+      name: X-Trace-ID
+      description: Globally unique identifier of the request in UUID v4 format
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    UploadBlobResponse:
+      description: Response to upload blob request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              blob_id:
+                type: string
+            required:
+              - blob_id
+    ErrorBadRequest:
+      description: Unable to process the request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ErrorInternal:
+      description: Internal error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"

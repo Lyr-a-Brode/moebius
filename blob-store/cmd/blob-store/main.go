@@ -3,8 +3,11 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/Lyr-a-Brode/moebius/blob-store/api"
 	"github.com/Lyr-a-Brode/moebius/blob-store/metrics"
+	"github.com/Lyr-a-Brode/moebius/blob-store/service"
+	"github.com/Lyr-a-Brode/moebius/blob-store/store"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 	"net/http"
@@ -29,9 +32,14 @@ func main() {
 		logger.SetLevel(log.DebugLevel)
 	}
 
+	blobStore, err := createStore(cfg.Store)
+	if err != nil {
+		log.WithError(err).Fatal("Unable to create blob store")
+	}
+
 	apiServer := &http.Server{
 		Addr:    cfg.App.Address,
-		Handler: api.NewRouter(api.NewHandlers(), cfg.App.EnableDebug),
+		Handler: api.NewRouter(api.NewHandlers(service.NewStoreService(blobStore)), cfg.App.EnableDebug),
 	}
 
 	metricsServer := &http.Server{
@@ -84,4 +92,13 @@ func runServer(s *http.Server) error {
 	}
 
 	return nil
+}
+
+func createStore(opts StoreOpts) (service.Store, error) {
+	switch opts.Type {
+	case "file":
+		return store.NewFileStore(opts.Path), nil
+	default:
+		return nil, fmt.Errorf("unknown store type %s", opts.Type)
+	}
 }

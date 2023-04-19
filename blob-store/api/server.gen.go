@@ -4,6 +4,10 @@
 package api
 
 import (
+	"fmt"
+	"net/http"
+
+	"github.com/deepmap/oapi-codegen/pkg/runtime"
 	"github.com/labstack/echo/v4"
 )
 
@@ -11,7 +15,7 @@ import (
 type ServerInterface interface {
 	// Upload blob
 	// (POST /api/v1/blobs/upload)
-	UploadBlob(ctx echo.Context) error
+	UploadBlob(ctx echo.Context, params UploadBlobParams) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -23,8 +27,30 @@ type ServerInterfaceWrapper struct {
 func (w *ServerInterfaceWrapper) UploadBlob(ctx echo.Context) error {
 	var err error
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params UploadBlobParams
+
+	headers := ctx.Request().Header
+	// ------------- Required header parameter "X-Trace-ID" -------------
+	if valueList, found := headers[http.CanonicalHeaderKey("X-Trace-ID")]; found {
+		var XTraceID XTraceID
+		n := len(valueList)
+		if n != 1 {
+			return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Expected one value for X-Trace-ID, got %d", n))
+		}
+
+		err = runtime.BindStyledParameterWithLocation("simple", false, "X-Trace-ID", runtime.ParamLocationHeader, valueList[0], &XTraceID)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter X-Trace-ID: %s", err))
+		}
+
+		params.XTraceID = XTraceID
+	} else {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Header parameter X-Trace-ID is required, but not found"))
+	}
+
 	// Invoke the callback with all the unmarshalled arguments
-	err = w.Handler.UploadBlob(ctx)
+	err = w.Handler.UploadBlob(ctx, params)
 	return err
 }
 
