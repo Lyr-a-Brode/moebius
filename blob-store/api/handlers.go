@@ -34,6 +34,8 @@ func (h Handlers) UploadBlob(ctx echo.Context, params UploadBlobParams) error {
 		})
 	}
 
+	format := ctx.FormValue("format")
+
 	src, err := file.Open()
 	if err != nil {
 		log.WithError(err).WithField("trace_id", traceID).
@@ -53,7 +55,7 @@ func (h Handlers) UploadBlob(ctx echo.Context, params UploadBlobParams) error {
 		}
 	}(src)
 
-	blobID, err := h.storeService.StoreBlob(tCtx, src)
+	blobID, err := h.storeService.StoreBlob(tCtx, src, format)
 	if err != nil {
 		log.WithError(err).WithField("trace_id", traceID).
 			Error("Unable to store blob")
@@ -64,5 +66,5 @@ func (h Handlers) UploadBlob(ctx echo.Context, params UploadBlobParams) error {
 		})
 	}
 
-	return ctx.JSON(http.StatusCreated, UploadBlobResponse{BlobId: blobID})
+	return ctx.JSON(http.StatusCreated, UploadBlobSuccessResponse{BlobId: blobID})
 }

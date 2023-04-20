@@ -20,13 +20,16 @@ paths:
               type: object
               required:
                 - file
+                - format
               properties:
                 file:
                   type: string
                   format: binary
+                format:
+                  type: string
       responses:
         201:
-          $ref: "#/components/responses/UploadBlobResponse"
+          $ref: "#/components/responses/UploadBlobSuccessResponse"
         400:
           $ref: "#/components/responses/ErrorBadRequest"
         500:
@@ -59,7 +62,7 @@ components:
         type: string
         format: uuid
   responses:
-    UploadBlobResponse:
+    UploadBlobSuccessResponse:
       description: Response to upload blob request
       content:
         application/json:

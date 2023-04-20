@@ -7,7 +7,7 @@ import (
 )
 
 type Store interface {
-	Put(ctx context.Context, blobID string, blob io.Reader) error
+	Put(ctx context.Context, blobID string, blob io.Reader, format string) error
 }
 
 type StoreService struct {
@@ -20,10 +20,10 @@ func NewStoreService(store Store) StoreService {
 	}
 }
 
-func (s StoreService) StoreBlob(ctx context.Context, blob io.Reader) (blobID string, err error) {
+func (s StoreService) StoreBlob(ctx context.Context, blob io.Reader, format string) (blobID string, err error) {
 	blobID = uuid.New().String()
 
-	if err := s.store.Put(ctx, blobID, blob); err != nil {
+	if err := s.store.Put(ctx, blobID, blob, format); err != nil {
 		return "", err
 	}
 
